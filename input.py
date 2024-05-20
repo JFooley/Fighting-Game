@@ -1,6 +1,17 @@
 import pygame
-import time
 from debug import debug
+
+##### OBSERVAÇÕES PARA O USO CORRETO DA CLASSE #####
+# Essa é uma classe singleton, ou seja, só possui uma instancia do objeto.
+# Ela é feita dessa forma para poder ser acessada de forma igual em qualquer parte do código
+# independente da cena que esteja sendo rodada. Ela só existe pois o pygame naturalmente não
+# possui um método de verificação de Key Up e Key Down, então foi necessário implementa-los.
+# Para usar corretamente, no ínicio do código é necessário chamar o método initialize() e a 
+# cada frame do jogo, chamar o método update.
+# Dai em diante basta importar e chamar Input() (com o parêntese, já que queremos o objeto) 
+# e usar seus métodos ou acessar seus atributos.
+# A respeito do funcionamento, a classe guarda a frame atual e o anterior do estado dos botões
+# e guarda um buffer legível das entradas e o seu tempo de frame entre elas.
 
 class Input:
     _instance = None
@@ -18,7 +29,10 @@ class Input:
 
             self.keys = 0
             self.last_frame = 0
+
             self.keys_buffer = []
+            self.frame_limiar = 15
+            self.frame_counter = self.frame_limiar
 
             self.A = pygame.K_z
             self.B = pygame.K_x
@@ -48,7 +62,7 @@ class Input:
     def update(self):
         self.last_frame = self.keys # Saves the last frame
 
-        raw_keys = pygame.key.get_pressed()
+        raw_keys = pygame.key.get_pressed() # Saves the current frame
         for button, index in self.button_mapping.items():
             key = getattr(self, button)
             if raw_keys[key]:
@@ -56,20 +70,7 @@ class Input:
             else:
                 self.keys &= ~(1 << index)  # Update key to 0
 
-            if (self.keys >> index) & 1 and not ((self.last_frame >> index) & 1):
-                self.keys_buffer.insert(0, (self.keys, time.time()))
-
-    def readble_buffer(self):
-        last_keys = []
-        for keys, timestamp in self.keys_buffer[:5]:
-            key_info = []
-            for button, index in self.button_mapping.items():
-                if (keys >> index) & 1:
-                    key_info.append(button)
-            # Formatar o timestamp para hh:mm:ss
-            formatted_time = time.strftime("%H:%M:%S", time.localtime(timestamp))
-            last_keys.append((key_info, formatted_time))
-        return last_keys
+        self.do_buff_inputs()
 
     def key_hold(self, button):
         index = self.button_mapping.get(button)
@@ -88,3 +89,18 @@ class Input:
         if index is not None:
             return not (self.keys >> index) & 1 and ((self.last_frame >> index) & 1)
         return None
+    
+    def do_buff_inputs(self):
+        if (self.keys & ~self.last_frame) != 0: # Check any button key down
+            key_info = []
+            for button, index in self.button_mapping.items(): # Translate the frame to a button readble
+                if ((self.keys & ~self.last_frame) >> index) & 1:
+                    key_info.append(button)
+
+            self.keys_buffer.insert(0, (self.frame_counter, key_info)) # Save the input and reset frame counter
+            self.frame_counter = 1
+        else:
+            self.frame_counter = self.frame_counter + 1 if self.frame_counter <= self.frame_limiar and self.frame_counter > 0 else 0 # Increase frame counter for each non key down frame
+            if self.frame_counter == self.frame_limiar:
+                self.keys_buffer.insert(0, (self.frame_limiar, ["N"]))
+    

@@ -4,8 +4,8 @@ ON_BATTLE = 1
 ON_MENU = 2
 
 # Screen
-WIDTH = 1280
-HEIGTH = 720
+WIDTH = 1336
+HEIGTH = 736
 FPS = 60
 
 # Generic

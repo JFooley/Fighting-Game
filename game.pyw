@@ -20,8 +20,8 @@ class Game:
         self.state: int = self.MENU
 
     def run(self):
-        Input().initialize()
         gameUI = UI(self)
+        Input().initialize()
 
         while True: # Main Loop
             for event in pygame.event.get(): # Event Handdler
@@ -33,13 +33,20 @@ class Game:
                     pygame.display.toggle_fullscreen()
 
             # First
-            debug(Input().readble_buffer()[0] if len(Input().keys_buffer) > 0 else "", y=10)
-            debug(Input().readble_buffer()[1] if len(Input().keys_buffer) > 1 else "", y=60)
-            debug(Input().readble_buffer()[2] if len(Input().keys_buffer) > 2 else "", y=110)
-            debug(Input().readble_buffer()[3] if len(Input().keys_buffer) > 3 else "", y=160)
-            debug(Input().readble_buffer()[4] if len(Input().keys_buffer) > 4 else "", y=210)
+            Input().update()
 
-            # Then
+            debug(str(Input().keys_buffer[0] if len(Input().keys_buffer) > 0 else "").ljust(50), y=110)
+            debug(str(Input().keys_buffer[1] if len(Input().keys_buffer) > 1 else "").ljust(50), y=160)
+            debug(str(Input().keys_buffer[2] if len(Input().keys_buffer) > 2 else "").ljust(50), y=210)
+            debug(str(Input().keys_buffer[3] if len(Input().keys_buffer) > 3 else "").ljust(50), y=260)
+            debug(str(Input().keys_buffer[4] if len(Input().keys_buffer) > 4 else "").ljust(50), y=310)
+            debug(str(Input().keys_buffer[5] if len(Input().keys_buffer) > 5 else "").ljust(50), y=360)
+            debug(str(Input().keys_buffer[6] if len(Input().keys_buffer) > 6 else "").ljust(50), y=410)
+            debug(str(Input().keys_buffer[7] if len(Input().keys_buffer) > 7 else "").ljust(50), y=460)
+            debug(str(Input().keys_buffer[8] if len(Input().keys_buffer) > 8 else "").ljust(50), y=510)
+            debug(str(Input().keys_buffer[9] if len(Input().keys_buffer) > 9 else "").ljust(50), y=560)
+
+            # Thens
             gameUI.display()
 
             # Finnally
