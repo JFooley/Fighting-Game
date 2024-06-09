@@ -1,12 +1,12 @@
 # Game states
-EXPLORING = 0
 ON_BATTLE = 1
-ON_MENU = 2
+MENU = 0
 
 # Screen
 WIDTH = 1336
 HEIGTH = 736
 FPS = 60
+CHARACTER_FPS = 16
 
 # Generic
 UNIT = HEIGTH // 9

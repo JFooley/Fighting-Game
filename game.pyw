@@ -1,4 +1,5 @@
 import pygame, sys
+from scenes.battle_scene import BattleScene
 from input import Input
 from UI import UI
 from settings import *
@@ -13,6 +14,7 @@ class Game:
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGTH))
         self.clock = pygame.time.Clock()
+        self.UI = UI(self)
         
         pygame.display.set_caption("Fight Game")
 
@@ -20,8 +22,8 @@ class Game:
         self.state: int = self.MENU
 
     def run(self):
-        gameUI = UI(self)
         Input().initialize()
+        battle_scene = BattleScene(self)
 
         while True: # Main Loop
             for event in pygame.event.get(): # Event Handdler
@@ -35,6 +37,12 @@ class Game:
             # First
             Input().update()
 
+            # Draws
+            battle_scene.run()
+            self.UI.display()
+
+            debug(f"Battle state: {battle_scene.state}")
+
             debug(str(Input().keys_buffer[0] if len(Input().keys_buffer) > 0 else "").ljust(50), y=110)
             debug(str(Input().keys_buffer[1] if len(Input().keys_buffer) > 1 else "").ljust(50), y=160)
             debug(str(Input().keys_buffer[2] if len(Input().keys_buffer) > 2 else "").ljust(50), y=210)
@@ -45,9 +53,6 @@ class Game:
             debug(str(Input().keys_buffer[7] if len(Input().keys_buffer) > 7 else "").ljust(50), y=460)
             debug(str(Input().keys_buffer[8] if len(Input().keys_buffer) > 8 else "").ljust(50), y=510)
             debug(str(Input().keys_buffer[9] if len(Input().keys_buffer) > 9 else "").ljust(50), y=560)
-
-            # Thens
-            gameUI.display()
 
             # Finnally
             pygame.display.update()

@@ -104,3 +104,9 @@ class Input:
             if self.frame_counter == self.frame_limiar:
                 self.keys_buffer.insert(0, (self.frame_limiar, ["N"]))
     
+    def check_string(self, move: list):
+        frame_index = 0
+        for frame in move:
+            for button in frame:
+                if self.keys_buffer[frame_index][1]:
+                    pass
